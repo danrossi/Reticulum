@@ -23,10 +23,17 @@
     "url": "https://github.com/skezo/Reticulum/issues"
   },
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "rollup": "^0.45.2",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-commonjs": "^8.1.0",
+    "rollup-plugin-uglify": "^2.0.1"
+  },
   "main": "reticulum.js",
   "engines": {
     "node": ">=0.8.0"
   },
-  "scripts": {}
+  "scripts": {
+    "build": "rollup -c"
+  }
 }
