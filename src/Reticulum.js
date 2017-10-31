@@ -13,11 +13,11 @@
  import Reticle from './Reticle';
 
  let INTERSECTED = null;
+ const collisionList = [];
 
  export default class Reticulum {
 
-   constructor(camera, renderer, options) {
-     this.collisionList = [];
+   constructor(camera, options) {
      this.vector = null;
      this.clock = null;
      this.reticle = null;
@@ -36,17 +36,21 @@
      this.vibrate = ReticleUtil.vibrate;
 
      this.camera = camera;
-     this.initiate(camera, renderer, options);
+     this.initiate(camera, options);
    }
 
-   initiate(camera, renderer, options) {
+   static collisionList() {
+      return collisionList;
+   }
+
+   initiate(camera, options) {
        //Update Settings:
        options = options || {};
 
        //settings.camera = camera; //required
-       this.settings.proximity = options.proximity || settings.proximity;
-       this.settings.lockDistance = options.lockDistance || settings.lockDistance;
-       this.settings.isClickEnabled = options.clickevents || settings.isClickEnabled;
+       this.settings.proximity = options.proximity || this.settings.proximity;
+       this.settings.lockDistance = options.lockDistance || this.settings.lockDistance;
+       this.settings.isClickEnabled = options.clickevents || this.settings.isClickEnabled;
        options.reticle = options.reticle || {};
        options.fuse = options.fuse || {};
 
@@ -62,12 +66,13 @@
        }
 
        //Create Parent Object for reticle and fuse
-       const parentContainer = new THREE.Object3D();
+       const parentContainer = this.parentContainer = new THREE.Object3D();
        camera.add( parentContainer );
 
        //Proximity Setup
        if( this.settings.proximity ) {
-         this.frustum = renderer.getFrustum();
+          this.frustum = new THREE.Frustum();
+          this.cameraViewProjectionMatrix = new THREE.Matrix4();
        }
 
        //Enable Click / Tap Events
@@ -87,6 +92,10 @@
 
        //Add to camera
        this.parentContainer.add( this.reticle.mesh );
+        
+       options.fuse.innerRadius = options.fuse.innerRadius || this.reticle.innerRadiusTo;
+       options.fuse.outerRadius = options.fuse.outerRadius || this.reticle.outerRadiusTo;
+
 
        //Initiate Fuse
        this.fuse = new Fuse(options.fuse);
@@ -101,7 +110,10 @@
        //Use frustum to see if any targetable object is visible
        //http://stackoverflow.com/questions/17624021/determine-if-a-mesh-is-visible-on-the-viewport-according-to-current-camera
 
-
+       this.camera.updateMatrixWorld();
+       this.camera.matrixWorldInverse.getInverse( this.camera.matrixWorld );
+       this.cameraViewProjectionMatrix.multiplyMatrices( this.camera.projectionMatrix, camera.matrixWorldInverse );
+       this.frustum.setFromMatrix( this.cameraViewProjectionMatrix );
 
        for( let i = 0, l = collisionList.length; i < l; i += 1) {
 
@@ -138,16 +150,17 @@
        this.raycaster.setFromCamera( this.vector, this.camera );
 
        //
-       const intersects = raycaster.intersectObjects(collisionList),
+       const intersects = this.raycaster.intersectObjects(collisionList),
        intersectsCount = intersects.length;
        //Detect
        if (intersectsCount) {
 
-           let newObj = null;
+           let newObj = null, point = null;
 
            //Check if what we are hitting can be used
            for( let i =0, l = intersectsCount; i < l; i += 1) {
                newObj = intersects[ i ].object;
+               point = intersects[ i ].point;
                //If new object is not gazeable skip it.
                if (!newObj.reticulumData.gazeable) {
                    if( newObj == INTERSECTED ) { //TO DO: move this else where
@@ -175,6 +188,9 @@
                    this.gazeOut(INTERSECTED);
                };
 
+               //add point to intersect
+               newObj.point = point;
+
                //Updated INTERSECTED with new object
                INTERSECTED = newObj;
                //Is the object gazeable?
@@ -184,7 +200,7 @@
                //}
            } else {
                //Ok it looks like we are in love
-               gazeLong(INTERSECTED);
+               this.gazeLong(INTERSECTED);
            }
 
        } else {
@@ -207,10 +223,10 @@
       //}
 
       this.reticle.hit = false;
-      this.reticle.setDepthAndScale();
+      this.depthScale = 0;
 
       if ( threeObject.onGazeOut != null ) {
-          threeObject.onGazeOut();
+          threeObject.onGazeOut(threeObject);
       }
   }
 
@@ -232,13 +248,13 @@
       ReticleUtil.vibrate( this.reticle.vibrateHover );
       //Does object have an action assigned to it?
       if (threeObject.onGazeOver != null) {
-          threeObject.onGazeOver();
+          threeObject.onGazeOver(threeObject);
       }
   }
 
   gazeLong( threeObject ) {
       let distance;
-      const elapsed = clock.getElapsedTime(),
+      const elapsed = this.clock.getElapsedTime(),
       gazeTime = elapsed - threeObject.userData.hitTime;
       //There has to be a better  way...
       //Keep updating distance while user is focused on target
@@ -258,12 +274,15 @@
       }
 
       //Fuse
-      if( gazeTime >= fuse.duration && !fuse.active ) {
+      if( gazeTime >= this.fuse.duration && !this.fuse.active  && !this.fuse.timeDone ) {
+          
+          this.fuse.timeDone = true;
+          this.fuse.mesh.visible = false;
           //Vibrate
           ReticleUtil.vibrate( this.fuse.vibratePattern );
           //Does object have an action assigned to it?
           if (threeObject.onGazeLong != null) {
-              threeObject.onGazeLong();
+              threeObject.onGazeLong(threeObject);
           }
           //Reset the clock
           threeObject.userData.hitTime = elapsed;
@@ -284,7 +303,7 @@
 
       //Does object have an action assigned to it?
       if (threeObject.onGazeClick != null) {
-          threeObject.onGazeClick();
+          threeObject.onGazeClick(threeObject);
       }
   }
 
@@ -296,7 +315,7 @@
       }
   }
 
-  add(threeObject, options) {
+  static add(threeObject, options) {
       const parameters = options || {};
 
       //Stores object options for reticulum
@@ -320,14 +339,14 @@
 
 
       //Add object to list
-      this.collisionList.push(threeObject);
+      collisionList.push(threeObject);
   }
 
-  remove(threeObject) {
+  static remove(threeObject) {
       const index = collisionList.indexOf(threeObject);
       threeObject.reticulumData.gazeable = false;
       if (index > -1) {
-          this.collisionList.splice(index, 1);
+          collisionList.splice(index, 1);
       }
   }
 
@@ -347,6 +366,6 @@
 
 
   set depthScale(value) {
-    ReticleUtil.setDepthAndScale(value, this.parentContainer, this.camera);
+    ReticleUtil.setDepthAndScale(value || this.reticle.restPoint, this.parentContainer, this.camera);
   }
 }

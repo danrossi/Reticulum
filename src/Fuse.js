@@ -20,7 +20,6 @@ export default class Fuse {
         this.visible        = parameters.visible            !== false; //default to true;
         this.globalDuration = parameters.duration           ||  2.5;
         this.vibratePattern = parameters.vibrate            ||  100;
-        this.color          = parameters.color              ||  0x00fff6;
         this.innerRadius    = parameters.innerRadius        ||  reticle.innerRadiusTo;
         this.outerRadius    = parameters.outerRadius        ||  reticle.outerRadiusTo;
         this.clickCancel    = parameters.clickCancelFuse    === undefined ? false : parameters.clickCancelFuse; //default to false;
@@ -28,13 +27,15 @@ export default class Fuse {
         this.thetaSegments  = 32;
         this.thetaStart     = Math.PI/2;
         this.duration       = this.globalDuration;
+        this.timeDone   = false;
 
         //var geometry = new THREE.CircleGeometry( reticle.outerRadiusTo, 32, Math.PI/2, 0 );
         const geometry = new THREE.RingGeometry( this.innerRadius, this.outerRadius, this.thetaSegments, this.phiSegments, this.thetaStart, Math.PI/2 );
 
+console.log("color", parameters.color );
         //Make Mesh
         this.mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( {
-            color: this.color,
+            color: parameters.color ||  0x00fff6,
             side: THREE.BackSide,
             fog: false
             //depthWrite: false,
@@ -48,6 +49,7 @@ export default class Fuse {
         this.mesh.position.z = 0.0001; // Keep in front of reticle
         this.mesh.rotation.y = 180*(Math.PI/180); //Make it clockwise
 
+        //this.color          = parameters.color              ||  0x00fff6;
         //Add to reticle
         //reticle.mesh.add( this.mesh );
         //parentContainer.add( this.mesh );
@@ -57,6 +59,7 @@ export default class Fuse {
     out() {
         this.active = false;
         this.mesh.visible = false;
+        this.timeDone = false;
         this.update(0);
     }
 
@@ -69,7 +72,7 @@ export default class Fuse {
 
     update(elapsed) {
 
-        if(!this.active) return;
+        if(!this.active || this.timeDone) return;
 
         //--RING
         const gazedTime = elapsed/this.duration,
@@ -90,6 +93,7 @@ export default class Fuse {
                 count++;
             }
             radius += radiusStep;
+
         }
 
         this.mesh.geometry.verticesNeedUpdate = true;

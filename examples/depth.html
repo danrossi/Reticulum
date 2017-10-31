@@ -70,7 +70,7 @@ WebVRConfig = {
 <script src="./js/lib/webvr-polyfill.js"></script>
 <script src="./js/lib/webvr-manager.js"></script>
 <!-- A simple gaze interaction manager for VR -->
-<script src="../reticulum.js"></script>
+<script src="../build/reticulum.js"></script>
 
 <script>
 /*
@@ -125,11 +125,6 @@ var radius = 10;
 var boxGeometry = new THREE.BoxGeometry( boxSize, boxSize, boxSize );
 
 
-for( var i =0; i < boxCount; i++ ) {
-	var x = 0 + radius * Math.cos(2 * Math.PI * i / boxCount);
-    var z = 0 + radius * Math.sin(2 * Math.PI * i / boxCount);  
-	addMesh(boxGeometry, x, 0, z);
-}
 
 
 function addMesh(geo, x, y, z) {
@@ -172,7 +167,7 @@ function addMesh(geo, x, y, z) {
 // *******************************
 // --- Reticulum ---
 // initiate Reticulum so it loads up 
-Reticulum.init(camera, {
+var reticulum = new Reticulum(camera, {
 	proximity: false,
 	reticle: {
 		visible: true,
@@ -199,6 +194,13 @@ Reticulum.init(camera, {
 	}
 });
 
+for( var i =0; i < boxCount; i++ ) {
+	var x = 0 + radius * Math.cos(2 * Math.PI * i / boxCount);
+    var z = 0 + radius * Math.sin(2 * Math.PI * i / boxCount);  
+	addMesh(boxGeometry, x, 0, z);
+}
+
+
 // IMPORTANT add camera to cene if you want to see a reticle 
 scene.add(camera);
 
@@ -213,7 +215,7 @@ function animate(timestamp) {
 	// *******************************
 	// --- Reticulum ---
 	// keep checking if user is looking at any tracked objects
-	Reticulum.update();
+	reticulum.update();
 	
 	var elapsed = clock.getElapsedTime()*1000; //Convert into milliseconds
 	var r = oscillation(radius-1, elapsed, 15000, radius, i)

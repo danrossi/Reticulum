@@ -36,7 +36,7 @@ export default class ReticleUtil {
     return navigator.vibrate ? navigator.vibrate.bind(navigator) : function(){};
   }
 
-  setColor(threeObject, color) {
+  static setColor(threeObject, color) {
       threeObject.material.color.setHex( color );
   }
 }

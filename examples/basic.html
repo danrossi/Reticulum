@@ -71,7 +71,7 @@ WebVRConfig = {
 <script src="./js/lib/webvr-polyfill.js"></script>
 <script src="./js/lib/webvr-manager.js"></script>
 <!-- A simple gaze interaction manager for VR -->
-<script src="../reticulum.js"></script>
+<script src="../build/reticulum.js"></script>
 
 
 
@@ -107,12 +107,6 @@ var boxGeometry = new THREE.BoxGeometry( 1, 1, 1 );
 var planeGeometry = new THREE.PlaneGeometry( 1, 1 );
 var sphereGeometry = new THREE.SphereGeometry( 2, 1, 1 );
 
-//Boxes, Planes and spheres
-for ( var i = 0; i < 750; i ++ ) {
-	addMesh(boxGeometry);
-	//addMesh(planeGeometry);
-	//addMesh(sphereGeometry);
-}
 
 
 
@@ -133,6 +127,8 @@ function addMesh(geo) {
 	// have the object react when user looks at it
 	// track the object
 	Reticulum.add( object, {
+		reticleHoverColor: 0x00fff6,
+		fuseVisible: true,
 		onGazeOver: function(){
 			// do something when user targets object
 			this.material.emissive.setHex( 0xffcc00 );
@@ -142,10 +138,12 @@ function addMesh(geo) {
 			this.material.emissive.setHex( 0xcc0000 );
 		},
 		onGazeLong: function(){
+			//console.log("FUCK", object);
 			// do something user targetes object for specific time
 			this.material.emissive.setHex( 0x0000cc );
 		},
 		onGazeClick: function(){
+			//console.log("FUCK", object);
 			// have the object react when user clicks / taps on targeted object
 			this.material.emissive.setHex( 0x00cccc * Math.random() );
 		}
@@ -156,10 +154,13 @@ function addMesh(geo) {
 }
 
 
+
+
 // *******************************
 // --- Reticulum ---
 // initiate Reticulum so it loads up 
-Reticulum.init(camera, {
+
+var reticulum = new Reticulum(camera, {
 	proximity: false,
 	clickevents: true,
 	reticle: {
@@ -179,13 +180,23 @@ Reticulum.init(camera, {
 	fuse: {
 		visible: false,
 		duration: 2.5,
-		color: 0x00fff6,
-		innerRadius: 0.045,
-		outerRadius: 0.06,
+		color: 0xffffff,
+		innerRadius: 0.02,
+		outerRadius: 0.03,
 		vibrate: 0, //Set to 0 or [] to disable
 		clickCancelFuse: false //If users clicks on targeted object fuse is canceled
 	}
 });
+
+
+
+//Boxes, Planes and spheres
+for ( var i = 0; i < 750; i ++ ) {
+	addMesh(boxGeometry);
+	//addMesh(planeGeometry);
+	//addMesh(sphereGeometry);
+}
+
 
 // IMPORTANT add camera to cene if you want to see a reticle 
 scene.add(camera);
@@ -196,7 +207,7 @@ function animate(timestamp) {
 	// *******************************
 	// --- Reticulum ---
 	// keep checking if user is looking at any tracked objects
-	Reticulum.update();
+	reticulum.update();
 	
 	controls.update();
 	camera.updateMatrixWorld(); // Required to stop ghosting - must be placed before render update

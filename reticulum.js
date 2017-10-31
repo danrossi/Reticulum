@@ -1,1 +1,1 @@
-export { Reticulum as Reticle } from 'src/Reticulum.js';
+export { Reticulum } from 'src/Reticulum.js';
