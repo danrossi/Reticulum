@@ -88,7 +88,7 @@
        this.reticle = new Reticle(camera, options.reticle);
 
        //set depth and scale
-       this.depthScale = this.resetPoint;
+       this.depthScale = this.reticle.resetPoint;
 
        //Add to camera
        this.parentContainer.add( this.reticle.mesh );
