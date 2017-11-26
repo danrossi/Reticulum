@@ -368,4 +368,8 @@
   set depthScale(value) {
     ReticleUtil.setDepthAndScale(value || this.reticle.restPoint, this.parentContainer, this.camera);
   }
+
+  set showRecticle(value) {
+    this.reticle.mesh.visible = value;
+  }
 }
