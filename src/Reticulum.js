@@ -33,7 +33,7 @@
          lockDistance:       false
      };
 
-     this.vibrate = ReticleUtil.vibrate;
+     //this.vibrate = ReticleUtil.vibrate;
 
      this.camera = camera;
      this.initiate(camera, options);
@@ -67,7 +67,8 @@
 
        //Create Parent Object for reticle and fuse
        const parentContainer = this.parentContainer = new THREE.Object3D();
-       camera.add( parentContainer );
+       this.addContainer();
+       //camera.add( parentContainer );
 
        //Proximity Setup
        if( this.settings.proximity ) {
@@ -245,7 +246,7 @@
 
       //Reticle
       //Vibrate
-      ReticleUtil.vibrate( this.reticle.vibrateHover );
+      //ReticleUtil.vibrate( this.reticle.vibrateHover );
       //Does object have an action assigned to it?
       if (threeObject.onGazeOver != null) {
           threeObject.onGazeOver(threeObject);
@@ -279,7 +280,7 @@
           this.fuse.timeDone = true;
           this.fuse.mesh.visible = false;
           //Vibrate
-          ReticleUtil.vibrate( this.fuse.vibratePattern );
+          //ReticleUtil.vibrate( this.fuse.vibratePattern );
           //Does object have an action assigned to it?
           if (threeObject.onGazeLong != null) {
               threeObject.onGazeLong(threeObject);
@@ -371,5 +372,13 @@
 
   set showRecticle(value) {
     this.reticle.mesh.visible = value;
+  }
+
+  addContainer() {
+    this.camera.add( this.parentContainer );
+  }
+
+  removeContainer() {
+    this.camera.add( this.parentContainer );
   }
 }

@@ -19,7 +19,7 @@ export default class Fuse {
 
         this.visible        = parameters.visible            !== false; //default to true;
         this.globalDuration = parameters.duration           ||  2.5;
-        this.vibratePattern = parameters.vibrate            ||  100;
+        //this.vibratePattern = parameters.vibrate            ||  100;
         this.innerRadius    = parameters.innerRadius        ||  reticle.innerRadiusTo;
         this.outerRadius    = parameters.outerRadius        ||  reticle.outerRadiusTo;
         this.clickCancel    = parameters.clickCancelFuse    === undefined ? false : parameters.clickCancelFuse; //default to false;
@@ -30,9 +30,8 @@ export default class Fuse {
         this.timeDone   = false;
 
         //var geometry = new THREE.CircleGeometry( reticle.outerRadiusTo, 32, Math.PI/2, 0 );
-        const geometry = new THREE.RingGeometry( this.innerRadius, this.outerRadius, this.thetaSegments, this.phiSegments, this.thetaStart, Math.PI/2 );
+        const geometry = new THREE.RingBufferGeometry( this.innerRadius, this.outerRadius, this.thetaSegments, this.phiSegments, this.thetaStart, Math.PI/2 );
 
-console.log("color", parameters.color );
         //Make Mesh
         this.mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( {
             color: parameters.color ||  0x00fff6,
@@ -77,7 +76,6 @@ console.log("color", parameters.color );
         //--RING
         const gazedTime = elapsed/this.duration,
         thetaLength = gazedTime * (Math.PI*2),
-        vertices = this.mesh.geometry.vertices,
         radiusStep = ( ( this.outerRadius - this.innerRadius ) / this.phiSegments );
 
         let count = 0,
@@ -86,17 +84,17 @@ console.log("color", parameters.color );
         for ( let i = 0; i <= this.phiSegments; i += 1 ) {
 
             for ( let o = 0; o <= this.thetaSegments; o+= 1 ) {
-                const vertex = vertices[ count ],
-                segment = this.thetaStart + o / this.thetaSegments * thetaLength;
-                vertex.x = radius * Math.cos( segment );
-                vertex.y = radius * Math.sin( segment );
+                const segment = this.thetaStart + o / this.thetaSegments * thetaLength;
+                //buffer geometry position attribute update x,y
+                this.mesh.geometry.attributes.position.setXY(count, radius * Math.cos(segment), radius * Math.sin(segment));
                 count++;
             }
             radius += radiusStep;
 
         }
 
-        this.mesh.geometry.verticesNeedUpdate = true;
+        //update buffer geometry position
+        this.mesh.geometry.attributes.position.needsUpdate = true;
 
         //Disable fuse if reached 100%
         if (gazedTime >= 1) {

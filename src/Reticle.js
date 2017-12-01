@@ -40,10 +40,10 @@ export default class Reticle {
       this.innerRadiusTo      = parameters.hover.innerRadius  || 0.02;
       this.outerRadiusTo      = parameters.hover.outerRadius  || 0.024;
       this.globalColorTo      = parameters.hover.color        || this.color;
-      this.vibrateHover       = parameters.hover.vibrate      || 50;
+      //this.vibrateHover       = parameters.hover.vibrate      || 50;
       this.hit                = false;
       //Click
-      this.vibrateClick       = parameters.click.vibrate      || 50;
+      //this.vibrateClick       = parameters.click.vibrate      || 50;
       //Animation options
       this.speed              = parameters.hover.speed        || 5;
       this.moveSpeed          = 0;
@@ -55,12 +55,20 @@ export default class Reticle {
       this.colorTo = this.globalColorToCopy;
 
       //Geometry
-      const geometry = new THREE.RingGeometry( this.innerRadius, this.outerRadius, 32, 3, 0, Math.PI * 2 ),
-      geometryScale = new THREE.RingGeometry( this.innerRadiusTo, this.outerRadiusTo, 32, 3, 0, Math.PI * 2 );
+      const geometry = new THREE.RingBufferGeometry( this.innerRadius, this.outerRadius, 32, 3, 0, Math.PI * 2 ),
+      geometryScale = new THREE.RingBufferGeometry( this.innerRadiusTo, this.outerRadiusTo, 32, 3, 0, Math.PI * 2 );
 
       //Add Morph Targets for scale animation
-      geometry.morphTargets.push( { name: "target1", vertices: geometryScale.vertices } );
+      //geometry.morphTargets.push( { name: "target1", vertices: geometryScale.vertices } );
 
+      //buffer geometry morphing
+      geometry.morphAttributes.position = [ geometryScale.attributes.position ];
+
+      // Hack required to get Mesh to have morphTargetInfluences attribute
+      //geometry.morphTargets = [];
+      //geometry.morphTargets.push( 0 );
+
+      //geometry.morphTargets.push( { name: "target1", positions: geometryScale.vertices } );
       //Make Mesh
       this.mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( {
           color: this.color,
