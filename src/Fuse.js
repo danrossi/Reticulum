@@ -31,7 +31,7 @@ export default class Fuse {
         this.duration       = this.globalDuration;
         this.timeDone   = false;
 
-        //var geometry = new THREE.CircleGeometry( reticle.outerRadiusTo, 32, Math.PI/2, 0 );
+
         const geometry = new RingBufferGeometry( this.innerRadius, this.outerRadius, this.thetaSegments, this.phiSegments, this.thetaStart, Math.PI/2 ),
         material = ReticleUtil.createShaderMaterial(parameters.color ||  0x00fff6);
         material.side = BackSide;
@@ -39,29 +39,12 @@ export default class Fuse {
 
         this.mesh = new Mesh(geometry, material);
 
-        //Make Mesh
-        /*this.mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( {
-            color: parameters.color ||  0x00fff6,
-            side: THREE.BackSide,
-            fog: false
-            //depthWrite: false,
-            //depthTest: false
-        }));*/
-
-
-
         //Set mesh visibility
         this.mesh.visible = this.visible;
 
         //Change position and rotation of fuse
         this.mesh.position.z = 0.0001; // Keep in front of reticle
         this.mesh.rotation.y = 180*(Math.PI/180); //Make it clockwise
-
-        //this.color          = parameters.color              ||  0x00fff6;
-        //Add to reticle
-        //reticle.mesh.add( this.mesh );
-        //parentContainer.add( this.mesh );
-        //geometry.dispose();
     }
 
     out() {
