@@ -7,7 +7,14 @@
  /**
   Refactoring to Es6 for Three.Js module import by Daniel Rossi
  */
-import { RingBufferGeometry, Color, Mesh } from 'three';
+//import { RingBufferGeometry, Color, Mesh } from 'three';
+
+
+//import files directly for bundling with three.js
+//bundling is flawed and need to find a better system. 
+import { RingBufferGeometry } from '../../three.js/src/geometries/RingGeometry';
+import { Mesh } from '../../three.js/src/objects/Mesh';
+import { Color } from '../../three.js/src/math/Color';
 
 import ReticleUtil from './ReticleUtil';
 

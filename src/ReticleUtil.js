@@ -7,7 +7,10 @@
  Refactoring to Es6 for Three.Js module import by Daniel Rossi
 */
 
-import { RawShaderMaterial } from 'three';
+//import { RawShaderMaterial } from 'three';
+
+
+import { RawShaderMaterial } from '../../three.js/src/materials/RawShaderMaterial';
 
 export default class ReticleUtil {
 
