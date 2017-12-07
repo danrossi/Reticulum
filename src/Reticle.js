@@ -7,6 +7,8 @@
  /**
   Refactoring to Es6 for Three.Js module import by Daniel Rossi
  */
+import { RingBufferGeometry, Color, Mesh } from 'three';
+
 import ReticleUtil from './ReticleUtil';
 
 let _globalColorTo = 0,
@@ -49,14 +51,14 @@ export default class Reticle {
       this.moveSpeed          = 0;
 
       //Colors
-      this.globalColor = new THREE.Color( this.globalColor );
+      this.globalColor = new Color( this.globalColor );
       this.color = this.globalColorCopy;
-      this.globalColorTo = new THREE.Color( this.globalColorTo );
+      this.globalColorTo = new Color( this.globalColorTo );
       this.colorTo = this.globalColorToCopy;
 
       //Geometry
-      const geometry = new THREE.RingBufferGeometry( this.innerRadius, this.outerRadius, 32, 3, 0, Math.PI * 2 ),
-      geometryScale = new THREE.RingBufferGeometry( this.innerRadiusTo, this.outerRadiusTo, 32, 3, 0, Math.PI * 2 );
+      const geometry = new RingBufferGeometry( this.innerRadius, this.outerRadius, 32, 3, 0, Math.PI * 2 ),
+      geometryScale = new RingBufferGeometry( this.innerRadiusTo, this.outerRadiusTo, 32, 3, 0, Math.PI * 2 );
 
       //Add Morph Targets for scale animation
       //geometry.morphTargets.push( { name: "target1", vertices: geometryScale.vertices } );
@@ -70,13 +72,27 @@ export default class Reticle {
 
       //geometry.morphTargets.push( { name: "target1", positions: geometryScale.vertices } );
       //Make Mesh
-      this.mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( {
+      /*this.mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( {
           color: this.color,
           morphTargets: true,
           fog: false
           //depthWrite: false,
           //depthTest: false
-      }));
+      }));*/
+
+      const material = ReticleUtil.createShaderMaterial(this.color);
+      material.morphTargets = true;
+      material.fog = false;
+
+      this.mesh = new Mesh(geometry, material);
+
+      /*this.mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( {
+          color: this.color,
+          morphTargets: true,
+          fog: false
+          //depthWrite: false,
+          //depthTest: false
+      }));*/
 
       this.mesh.visible = this.visible;
 

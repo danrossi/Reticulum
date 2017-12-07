@@ -22,7 +22,9 @@
   "bugs": {
     "url": "https://github.com/skezo/Reticulum/issues"
   },
-  "dependencies": {},
+  "dependencies": {
+    "three": "^0.88.0"
+  },
   "devDependencies": {
     "rollup": "^0.50.0",
     "rollup-plugin-babel": "^3.0.2",

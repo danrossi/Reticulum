@@ -5,6 +5,8 @@ import uglify from 'rollup-plugin-uglify';
 export default {
     entry: 'src/Reticulum.js',
     indent: '\t',
+    external:['three'], 
+    globals: { three: 'THREE' },
     plugins: [
         babel({
             externalHelpers: false,

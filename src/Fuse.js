@@ -7,6 +7,8 @@
  /**
   Refactoring to Es6 for Three.Js module import by Daniel Rossi
  */
+import { RingBufferGeometry, BackSide, Mesh } from 'three';
+
 import ReticleUtil from './ReticleUtil';
 
 export default class Fuse {
@@ -30,16 +32,23 @@ export default class Fuse {
         this.timeDone   = false;
 
         //var geometry = new THREE.CircleGeometry( reticle.outerRadiusTo, 32, Math.PI/2, 0 );
-        const geometry = new THREE.RingBufferGeometry( this.innerRadius, this.outerRadius, this.thetaSegments, this.phiSegments, this.thetaStart, Math.PI/2 );
+        const geometry = new RingBufferGeometry( this.innerRadius, this.outerRadius, this.thetaSegments, this.phiSegments, this.thetaStart, Math.PI/2 ),
+        material = ReticleUtil.createShaderMaterial(parameters.color ||  0x00fff6);
+        material.side = BackSide;
+        material.fog = false;
+
+        this.mesh = new Mesh(geometry, material);
 
         //Make Mesh
-        this.mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( {
+        /*this.mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( {
             color: parameters.color ||  0x00fff6,
             side: THREE.BackSide,
             fog: false
             //depthWrite: false,
             //depthTest: false
-        }));
+        }));*/
+
+
 
         //Set mesh visibility
         this.mesh.visible = this.visible;
