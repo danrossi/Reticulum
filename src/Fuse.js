@@ -43,12 +43,11 @@ export default class Fuse {
 
 
         const geometry = new RingBufferGeometry( this.innerRadius, this.outerRadius, this.thetaSegments, this.phiSegments, this.thetaStart, Math.PI/2 ),
-        material = ReticleUtil.createShaderMaterial(parameters.color ||  0x00fff6);
+        material = ReticleUtil.createShaderMaterial(parameters.color ||  0x00fff6, 1, false);
         material.side = BackSide;
-        material.fog = false;
 
         this.mesh = new Mesh(geometry, material);
-
+        
         //Set mesh visibility
         this.mesh.visible = this.visible;
 

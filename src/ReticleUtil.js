@@ -16,7 +16,7 @@ export default class ReticleUtil {
 
     /**
      * Basic vertex shader for raw shader material
-     */
+     
     static get vertexShader() {
         return `
             attribute vec2 uv;
@@ -27,14 +27,50 @@ export default class ReticleUtil {
               gl_Position = projectionMatrix * modelViewMatrix * position;
             }
         `;
-    }
+    }*/
 
+    /**
+     * Trimmed down customised vertex shader with morph targets
+     */
+    static get vertexMorphShader() {
+        return `
+        precision highp float;
+        precision highp int;
+    
+        #include <morphtarget_pars_vertex>
+      
+        #ifdef USE_MORPHTARGETS
+            attribute vec3 morphTarget0;
+            attribute vec3 morphTarget1;
+            attribute vec3 morphTarget2;
+            attribute vec3 morphTarget3;
+            attribute vec3 morphTarget4;
+            attribute vec3 morphTarget5;
+            attribute vec3 morphTarget6;
+            attribute vec3 morphTarget7;
+        #endif
+
+        varying vec2 vUv;
+        attribute vec2 uv;
+        attribute vec3 position;
+        uniform mat4 projectionMatrix;
+        uniform mat4 modelViewMatrix;
+            
+        void main() {
+            #include <begin_vertex>
+            #include <morphtarget_vertex>
+            #include <project_vertex>
+        }
+        `;
+    }
+    
     /**
      * Basic fragment shader for raw shader material
      */
     static get fragmentShader() {
         return `
             precision highp float;
+            precision highp int;
             uniform vec3 color;
             uniform float opacity;
             void main() {
@@ -44,9 +80,19 @@ export default class ReticleUtil {
     }
 
     /**
+     * Morph target shader material
+     */
+    static createMorphShaderMaterial(color, opacity, transparent) {
+        const material = ReticleUtil.createShaderMaterial(color, opacity, transparent);
+        material.morphTargets = true;
+        material.defines = { "USE_MORPHTARGETS": "" };
+        return material;
+    }
+
+    /**
      * use raw shader material for fuse and recticle
      */
-    static createShaderMaterial(color) {
+    static createShaderMaterial(color, opacity, transparent) {
       return new RawShaderMaterial( {
         uniforms: {
                 color: {
@@ -55,10 +101,11 @@ export default class ReticleUtil {
                 },
                 opacity: {
                     type: 'f',
-                    value: 1
+                    value: opacity
                 }
           },
-          vertexShader: ReticleUtil.vertexShader,
+          transparent: transparent,
+          vertexShader: ReticleUtil.vertexMorphShader,
           fragmentShader: ReticleUtil.fragmentShader,
       });
     }

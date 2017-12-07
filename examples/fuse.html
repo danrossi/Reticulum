@@ -74,7 +74,7 @@ WebVRConfig = {
 
 <script>
 // Setup three.js WebGL renderer
-var renderer = new THREE.WebGLRenderer( { antialias: true } );
+var renderer = new THREE.WebGLRenderer( { antialias: false } );
 renderer.setPixelRatio( window.devicePixelRatio );
 // Append the canvas element created by the renderer to document body element.
 document.body.appendChild( renderer.domElement );
@@ -151,6 +151,7 @@ function addMesh(geo, x, y, z, i) {
 	parent.add( object );
 
 }
+
 
 
 // *******************************

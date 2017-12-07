@@ -16,6 +16,7 @@ import { RingBufferGeometry } from '../../three.js/src/geometries/RingGeometry';
 import { Mesh } from '../../three.js/src/objects/Mesh';
 import { Color } from '../../three.js/src/math/Color';
 
+
 import ReticleUtil from './ReticleUtil';
 
 let _globalColorTo = 0,
@@ -68,10 +69,8 @@ export default class Reticle {
       //buffer geometry morphing
       geometry.morphAttributes.position = [ geometryScale.attributes.position ];
 
-      const material = ReticleUtil.createShaderMaterial(this.color);
-      material.morphTargets = true;
-      material.fog = false;
-
+      const material = ReticleUtil.createMorphShaderMaterial(this.color, 1, false);
+    
       this.mesh = new Mesh(geometry, material);
 
       this.mesh.visible = this.visible;

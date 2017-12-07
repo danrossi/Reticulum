@@ -70,7 +70,7 @@ WebVRConfig = {
 <script src="./js/lib/webvr-polyfill.js"></script>
 <script src="./js/lib/webvr-manager.js"></script>
 <!-- A simple gaze interaction manager for VR -->
-<script src="../reticulum.js"></script>
+<script src="../build/reticulum.js"></script>
 
 
 
@@ -101,7 +101,7 @@ var manager = new WebVRManager( renderer, effect, {hideButton: false} );
 // *******************************
 // --- Reticulum ---
 // initiate Reticulum so it loads up 
-Reticulum.init(camera, {
+var reticulum = new Reticulum(camera, {
 	proximity: false,
 	clickevents: true,
 	near: 4,
@@ -207,7 +207,7 @@ function animate(timestamp) {
 	// *******************************
 	// --- Reticulum ---
 	// keep checking if user is looking at any tracked objects
-	Reticulum.update();
+	reticulum.update();
 	
 	controls.update();
 	camera.updateMatrixWorld(); // Required to stop ghosting - must be placed before render update
