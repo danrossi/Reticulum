@@ -17513,7 +17513,7 @@
 		var fragmentGlsl = prefixFragment + fragmentShader;
 
 		// console.log( '*VERTEX*', vertexGlsl );
-		// console.log( '*FRAGMENT*', fragmentGlsl );
+		console.log( '*FRAGMENT*', fragmentGlsl );
 
 		var glVertexShader = WebGLShader( gl, gl.VERTEX_SHADER, vertexGlsl );
 		var glFragmentShader = WebGLShader( gl, gl.FRAGMENT_SHADER, fragmentGlsl );

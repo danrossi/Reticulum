@@ -7,7 +7,7 @@
  Refactoring to Es6 for Three.Js module import by Daniel Rossi
 */
 
-//import { RawShaderMaterial } from 'three';
+//import { RawShaderMaterial, ShaderMaterial } from 'three';
 
 
 import { RawShaderMaterial } from '../../three.js/src/materials/RawShaderMaterial';
@@ -93,6 +93,7 @@ export default class ReticleUtil {
      * use raw shader material for fuse and recticle
      */
     static createShaderMaterial(color, opacity, transparent) {
+      //console.log(THREE.ShaderLib);
       return new RawShaderMaterial( {
         uniforms: {
                 color: {
@@ -106,6 +107,7 @@ export default class ReticleUtil {
           },
           transparent: transparent,
           vertexShader: ReticleUtil.vertexMorphShader,
+          //fragmentShader: THREE.ShaderLib.basic.fragmentShader
           fragmentShader: ReticleUtil.fragmentShader,
       });
     }

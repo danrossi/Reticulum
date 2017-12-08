@@ -70,7 +70,16 @@ export default class Reticle {
       geometry.morphAttributes.position = [ geometryScale.attributes.position ];
 
       const material = ReticleUtil.createMorphShaderMaterial(this.color, 1, false);
-    
+      
+      /*this.mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( {
+          color: this.color,
+          morphTargets: true,
+          fog: false
+          //depthWrite: false,
+          //depthTest: false
+      }));*/
+
+
       this.mesh = new Mesh(geometry, material);
 
       this.mesh.visible = this.visible;
