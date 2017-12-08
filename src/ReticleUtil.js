@@ -93,7 +93,7 @@ export default class ReticleUtil {
      * use raw shader material for fuse and recticle
      */
     static createShaderMaterial(color, opacity, transparent) {
-      //console.log(THREE.ShaderLib);
+    
       return new RawShaderMaterial( {
         uniforms: {
                 color: {
@@ -107,8 +107,8 @@ export default class ReticleUtil {
           },
           transparent: transparent,
           vertexShader: ReticleUtil.vertexMorphShader,
-          //fragmentShader: THREE.ShaderLib.basic.fragmentShader
           fragmentShader: ReticleUtil.fragmentShader,
+         
       });
     }
 
