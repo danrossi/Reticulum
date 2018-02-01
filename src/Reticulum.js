@@ -11,13 +11,16 @@
  import ReticleUtil from './ReticleUtil';
  import Fuse from './Fuse';
  import Reticle from './Reticle';
+ import { EventDispatcher } from '../../three.js/src/core/EventDispatcher';
 
  let INTERSECTED = null;
  const collisionList = [];
 
- export default class Reticulum {
+ export default class Reticulum extends EventDispatcher {
 
    constructor(camera, options) {
+    super();
+
      this.vector = null;
      this.clock = null;
      this.reticle = null;
@@ -138,6 +141,10 @@
 
    }
 
+    get intersections() {
+        return this.raycaster.intersectObjects(collisionList);
+    }
+
    detectHit() {
        /*try {
            raycaster.setFromCamera( vector, settings.camera );
@@ -151,7 +158,8 @@
        this.raycaster.setFromCamera( this.vector, this.camera );
 
        //
-       const intersects = this.raycaster.intersectObjects(collisionList),
+       //const intersects = this.raycaster.intersectObjects(collisionList),
+       const intersects = this.intersections,
        intersectsCount = intersects.length;
        //Detect
        if (intersectsCount) {
