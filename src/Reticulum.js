@@ -11,12 +11,13 @@
  import ReticleUtil from './ReticleUtil';
  import Fuse from './Fuse';
  import Reticle from './Reticle';
- import { EventDispatcher } from '../../three.js/src/core/EventDispatcher';
+ import ReticleEventDispatcher from './event/ReticleEventDispatcher';
+
 
  let INTERSECTED = null;
  const collisionList = [];
 
- export default class Reticulum extends EventDispatcher {
+ export default class Reticulum extends ReticleEventDispatcher {
 
    constructor(camera, options) {
     super();
@@ -179,10 +180,10 @@
                    continue;
                }
                //If new object is invisible skip it.
-               if( this.reticle.ignoreInvisible && !newObj.visible) {
+               /*if( this.reticle.ignoreInvisible && !newObj.visible) {
                    newObj = null;
                    continue;
-               }
+               }*/
                //No issues let use this one
                break;
            }
