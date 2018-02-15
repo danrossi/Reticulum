@@ -107,7 +107,7 @@ export default class ReticleUtil {
           },
           transparent: transparent,
           vertexShader: ReticleUtil.vertexMorphShader,
-          fragmentShader: ReticleUtil.fragmentShader,
+          fragmentShader: ReticleUtil.fragmentShader
          
       });
     }
