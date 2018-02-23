@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>
+            VRController for Three.js (WebVR)
+        </title>
+        <meta charset="utf-8">
+            <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport">
+                <style>
+                    body {
+
+				margin: 0;
+				overflow: hidden;
+				font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				font-size:   13px;
+				line-height: 20px;
+			}
+			header {
+
+				position: absolute;
+				top:  10px; 
+				left: 10px;
+				background-color: rgba( 255, 255, 255, 0.9 );
+				padding: 20px;
+			}
+			button {
+
+				border-radius: 4px;
+				background-color: #F40 !important;
+				padding: 12px !important;
+			}
+                </style>
+                
+                <script src="./js/WebVR.js"></script>
+
+<script src="./js/three.js"></script>
+
+<script src="../build/reticulum.js"></script>
+
+            </meta>
+        </meta>
+    </head>
+    <body>
+        <script>
+            var camera, scene, renderer, controls
+
+
+//  We need a renderer.
+
+renderer = new THREE.WebGLRenderer({ antialias: false })
+renderer.setClearColor( 0xCCCCCC )
+renderer.setPixelRatio( window.devicePixelRatio )
+renderer.setSize( window.innerWidth, window.innerHeight )
+renderer.vr.enabled  = true
+renderer.shadowMap.enabled = true
+renderer.shadowMap.type = THREE.PCFSoftShadowMap
+document.body.appendChild( renderer.domElement )
+document.body.appendChild( WEBVR.createButton( renderer ) );
+
+
+ 
+camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, .01, 100000 );
+
+scene  = new THREE.Scene()
+scene.add( camera )
+
+
+//fake controller reset after
+var controller = new THREE.Object3D();
+
+var geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+var material = new THREE.MeshBasicMaterial();
+ uiObject = new THREE.Mesh(geometry, material);
+uiObject.position.z = -5
+
+//uiObject.visible = false;
+
+var laserLine, laserMarker;
+
+
+
+var intersectedObjects = [], intersected = [];
+var tempMatrix = new THREE.Matrix4();
+
+var raycaster = new THREE.Raycaster();
+
+
+//default distance of the raycaster marker
+var defaultMarkerDistance = 10;
+
+//default scale of raycaster marker to be used to re-calculate scale
+var defaultMarkerScale = 0.07;
+
+//default scale fraction
+var scaleFraction = defaultMarkerScale / defaultMarkerDistance;
+
+var intersectedObjects = [uiObject];
+
+scene.add( uiObject );
+
+var reticulum = new Reticulum(camera, {
+	proximity: false,
+	clickevents: true,
+	reticle: {
+		visible: true,
+		restPoint: 1000, //Defines the reticle's resting point when no object has been targeted
+		color: 0xcc0000,
+		innerRadius: 0.0004,
+		outerRadius: 0.003,
+		hover: {
+			color: 0xcc0000,
+			innerRadius: 0.02,
+			outerRadius: 0.024,
+			speed: 5,
+			vibrate: 50 //Set to 0 or [] to disable
+		}
+	},
+	fuse: {
+		visible: false,
+		duration: 2.5,
+		color: 0x00fff6,
+		innerRadius: 0.045,
+		outerRadius: 0.06,
+		vibrate: 100, //Set to 0 or [] to disable
+		clickCancelFuse: false //If users clicks on targeted object fuse is canceled
+	}
+});
+
+Reticulum.add(uiObject, {
+		reticleHoverColor: 0x00fff6,
+		fuseVisible: true,
+		onGazeOver: function(){
+			
+			// do something when user targets object
+			this.material.color.setHex( 0xffcc00 );
+		},
+		onGazeOut: function(){
+			// do something when user moves reticle off targeted object
+			this.material.color.setHex( 0xcc0000 );
+		},
+		onGazeLong: function(){
+			// do something user targetes object for specific time
+			this.material.color.setHex( 0x0000cc );
+		},
+		onGazeClick: function(){
+			// have the object react when user clicks / taps on targeted object
+			this.material.color.setHex( 0x00cccc * Math.random() );
+		}
+	});
+
+
+	function onWindowResize(){
+
+		camera.aspect = window.innerWidth / window.innerHeight
+		camera.updateProjectionMatrix()
+		renderer.setSize( window.innerWidth, window.innerHeight )
+	}
+	window.addEventListener( 'resize', onWindowResize, false )
+
+
+
+function update(){
+
+	reticulum.update();
+	renderer.render( scene, camera );
+}
+renderer.animate( update );
+        </script>
+    </body>
+</html>

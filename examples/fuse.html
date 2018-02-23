@@ -28,7 +28,7 @@ WebVRConfig = {
    * webvr-polyfill configuration
    */
   // Forces availability of VR mode.
-  //FORCE_ENABLE_VR: true, // Default: false.
+  FORCE_ENABLE_VR: true, // Default: false.
   
   // Complementary filter coefficient. 0 for accelerometer, 1 for gyro.
   //K_FILTER: 0.98, // Default: 0.98.
@@ -63,16 +63,28 @@ WebVRConfig = {
 </script>
 
 <!-- THREE library, controls and effects -->
-<script src="./js/lib/three.js"></script>
+<!--<script src="./js/lib/three.js"></script>-->
+
+<!--
+<script src="https://cdn.rawgit.com/mrdoob/three.js/r90/build/three.js"></script>-->
+
+<script src="./js/WebVR.js"></script>
+<!--<script src="./js/lib/webvr-polyfill.js"></script>-->
+
+<script src="./js/three.js"></script>
+
+<!--
 <script src="./js/lib/VRControls.js"></script>
 <script src="./js/lib/VREffect.js"></script>
-<!-- WebVR polyfill and manager -->
+
 <script src="./js/lib/webvr-polyfill.js"></script>
-<script src="./js/lib/webvr-manager.js"></script>
+<script src="./js/lib/webvr-manager.js"></script>-->
 <!-- A simple gaze interaction manager for VR -->
 <script src="../build/reticulum.js"></script>
 
 <script>
+
+	 document.body.appendChild( WEBVR.createButton( renderer ) );
 // Setup three.js WebGL renderer
 var renderer = new THREE.WebGLRenderer( { antialias: false } );
 renderer.setPixelRatio( window.devicePixelRatio );
@@ -84,16 +96,21 @@ var scene = new THREE.Scene();
 
 //Create a three.js camera
 var camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.3, 10000);
+
+
+var renderer = new THREE.WebGLRenderer({ antialias: false });
+renderer.setClearColor( 0x333333, 1 );
+renderer.vr.enabled = true;
 //Apply VR headset positional data to camera.
-var controls = new THREE.VRControls( camera );
-controls.standing = true;
+//var controls = new THREE.VRControls( camera );
+//controls.standing = true;
 
 //Apply VR stereo rendering to renderer
-var effect = new THREE.VREffect( renderer );
-effect.setSize( window.innerWidth, window.innerHeight );
+//var effect = new THREE.VREffect( renderer );
+//effect.setSize( window.innerWidth, window.innerHeight );
 
 // Create a VR manager helper to enter and exit VR mode.
-var manager = new WebVRManager( renderer, effect, {hideButton: false} );
+//var manager = new WebVRManager( renderer, effect, {hideButton: false} );
 
 
 
@@ -206,17 +223,21 @@ function animate(timestamp) {
 	// *******************************
 	// --- Reticulum ---
 	// keep checking if user is looking at any tracked objects
-	reticulum.update();
+//	reticulum.update();
 	
-	controls.update();
-	camera.updateMatrixWorld(); // Required to stop ghosting - must be placed before render update
-	manager.render(scene, camera, timestamp);
+	//controls.update();
+	//camera.updateMatrixWorld(); // Required to stop ghosting - must be placed before render update
+	//manager.render(scene, camera, timestamp);
 
-	requestAnimationFrame(animate);
+	 renderer.render( scene, camera );
+
+
+
+	//requestAnimationFrame(animate);
 	
 }
 var clock = new THREE.Clock(true);
-animate();
+renderer.animate( animate );
 
 
 /*
@@ -225,7 +246,8 @@ Handle window resizes
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
-  effect.setSize( window.innerWidth, window.innerHeight );
+  renderer.setSize( window.innerWidth, window.innerHeight );
+  //effect.setSize( window.innerWidth, window.innerHeight );
 }
 window.addEventListener( 'resize', onWindowResize, false );
 window.addEventListener( 'vrdisplaypresentchange', onWindowResize, true );

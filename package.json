@@ -23,7 +23,7 @@
     "url": "https://github.com/skezo/Reticulum/issues"
   },
   "dependencies": {
-    "three": "^0.88.0"
+    "three": "^0.90.0"
   },
   "devDependencies": {
     "rollup": "^0.50.0",
