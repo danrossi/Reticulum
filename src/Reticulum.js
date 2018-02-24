@@ -54,7 +54,7 @@
        //settings.camera = camera; //required
        this.settings.proximity = options.proximity || this.settings.proximity;
        this.settings.lockDistance = options.lockDistance || this.settings.lockDistance;
-       this.settings.isClickEnabled = options.clickevents || this.settings.isClickEnabled;
+       //this.settings.isClickEnabled = options.clickevents || this.settings.isClickEnabled;
        options.reticle = options.reticle || {};
        options.fuse = options.fuse || {};
 
@@ -81,10 +81,10 @@
        }
 
        //Enable Click / Tap Events
-       if( this.settings.isClickEnabled ) {
+      /* if( this.settings.isClickEnabled ) {
            document.body.addEventListener('touchend', (e) => this.touchClickHandler(e), false);
            document.body.addEventListener('click', (e) => this.touchClickHandler(e), false);
-       }
+       }*/
 
        //Clock Setup
        this.clock = new THREE.Clock(true);
