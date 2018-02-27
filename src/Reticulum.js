@@ -318,12 +318,12 @@
   }
 
   //This function is called on click or touch events
-  touchClickHandler(e) {
+  /*touchClickHandler(e) {
       if( this.reticle.hit && INTERSECTED ) {
           e.preventDefault();
           this.gazeClick(INTERSECTED);
       }
-  }
+  }*/
 
   static add(threeObject, options) {
       const parameters = options || {};
